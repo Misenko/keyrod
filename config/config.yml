@@ -1,0 +1,9 @@
+keyrod:
+  fedcloud:
+    site: https://carach6.ics.muni.cz/
+    access_token: eyJraWQiOiJvaW...RjIiwiYWxnIjoiUlML7JQ
+    group: fedcloud.egi.eu
+    fallback: false
+  oidc:
+    site: https://aai-dev.egi.eu/oidc/
+    refresh_token: eyJraWQiOiJvaW...RjIiwiYWxnIjoiUlML7JQ
