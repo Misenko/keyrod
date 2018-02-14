@@ -10,9 +10,15 @@ Gem::Specification.new do |spec|
   spec.executables   = ['keyrod']
   spec.homepage      = 'https://github.com/cduongt/keyrod'
   spec.license       = 'Apache License, Version 2.0'
+
+  spec.add_development_dependency 'bundler', '~> 1.13'
+  spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rspec', '~> 3.5'
   spec.add_development_dependency 'rubocop', '~> 0.48'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.15'
+
   spec.add_runtime_dependency 'settingslogic', '~> 2.0'
   spec.add_runtime_dependency 'thor', '~> 0.19'
+
+  spec.required_ruby_version = '>= 2.2.0'
 end

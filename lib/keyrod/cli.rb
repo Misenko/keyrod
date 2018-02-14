@@ -39,7 +39,6 @@ module Keyrod
            type: :string,
            desc: 'OIDC site for authenticating refresh token',
            aliases: '-o'
-    def token
-    end
+    def token; end
   end
 end
