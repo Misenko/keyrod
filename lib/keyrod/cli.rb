@@ -3,7 +3,7 @@ require 'thor'
 module Keyrod
   class CLI < Thor
     desc 'token', 'Get login token for FedCloud site'
-    option :'site',
+    option :site,
            required: true,
            default: Keyrod::Settings['fedcloud']['site'],
            type: :string,
@@ -15,15 +15,15 @@ module Keyrod
            type: :string,
            desc: 'Access token for authentication',
            aliases: '-a'
-    option :'group',
+    option :group,
            required: false,
            default: Keyrod::Settings['fedcloud']['group'],
            type: :string,
            desc: 'Group to join',
            aliases: '-g'
-    option :'fall-back-to-interactive',
+    option :'interactive-fallback',
            required: false,
-           default: Keyrod::Settings['fedcloud']['fallback'],
+           default: Keyrod::Settings['fedcloud']['interactive-fallback'],
            type: :boolean,
            desc: 'Fallback to interactive mode if group is not set',
            aliases: '-f'

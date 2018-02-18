@@ -1,9 +1,9 @@
 keyrod:
   fedcloud:
-    site: https://carach6.ics.muni.cz/
-    access_token: eyJraWQiOiJvaW...RjIiwiYWxnIjoiUlML7JQ
-    group: fedcloud.egi.eu
-    fallback: false
+    site: http://localhost/ # EGI FedCloud Site to authenticate against
+    access_token: # Access token
+    group: # ID of the group to join
+    interactive-fallback: false # Fallback to interactive mode if group is not set
   oidc:
-    site: https://aai-dev.egi.eu/oidc/
-    refresh_token: eyJraWQiOiJvaW...RjIiwiYWxnIjoiUlML7JQ
+    site: http://localhost/token # OIDC site to authenticate refresh token against
+    refresh_token: # Refresh token

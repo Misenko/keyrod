@@ -1,3 +1,5 @@
+require: rubocop-rspec
+
 AllCops:
   TargetRubyVersion: 2.2
 
@@ -5,12 +7,6 @@ Metrics/LineLength:
   Max: 135
 
 Style/Documentation:
-  Enabled: false
-
-Style/SymbolLiteral:
-  Enabled: false
-
-Style/BlockDelimiters:
   Enabled: false
 
 Metrics/MethodLength:
@@ -21,9 +17,6 @@ Metrics/AbcSize:
 
 Metrics/ClassLength:
   Max: 120
-
-Metrics/ClassLength:
-  Max: 125
 
 Metrics/BlockLength:
   Exclude:
