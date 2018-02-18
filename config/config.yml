@@ -7,3 +7,5 @@ keyrod:
   oidc:
     site: http://localhost/token # OIDC site to authenticate refresh token against
     refresh_token: # Refresh token
+    client_id: # OIDC client ID
+    client_secret: # OIDC client secret

@@ -39,6 +39,18 @@ module Keyrod
            type: :string,
            desc: 'OIDC site for authenticating refresh token',
            aliases: '-o'
+    option :'client-id',
+           required: false,
+           default: Keyrod::Settings['oidc']['client_id'],
+           type: :string,
+           desc: 'OIDC client ID',
+           aliases: '-i'
+    option :'client-secret',
+           required: false,
+           default: Keyrod::Settings['oidc']['client_secret'],
+           type: :string,
+           desc: 'OIDC client secret',
+           aliases: '-t'
     def token; end
   end
 end
