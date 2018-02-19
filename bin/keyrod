@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'keyrod'
+
+Keyrod::CLI.start(ARGV)
