@@ -1,11 +1,14 @@
 keyrod:
+  debug: false # Debug mode
+  ca-dir: # CA directory
+  verify-ssl: true # Verify SSL certificate
   fedcloud:
-    site: http://localhost/ # EGI FedCloud Site to authenticate against
+    site: # EGI FedCloud Site to authenticate against
     access_token: # Access token
     group: # ID of the group to join
     interactive-fallback: false # Fallback to interactive mode if group is not set
   oidc:
-    site: http://localhost/token # OIDC site to authenticate refresh token against
+    site: # OIDC site to authenticate refresh token against
     refresh_token: # Refresh token
     client_id: # OIDC client ID
     client_secret: # OIDC client secret

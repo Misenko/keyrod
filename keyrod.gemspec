@@ -20,7 +20,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.7'
   spec.add_development_dependency 'rubocop', '~> 0.52'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.22'
+  spec.add_development_dependency 'webmock', '~> 3.3'
 
+  spec.add_runtime_dependency 'faraday', '~> 0.14'
   spec.add_runtime_dependency 'settingslogic', '~> 2.0'
   spec.add_runtime_dependency 'thor', '~> 0.20'
 
