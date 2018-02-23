@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Keyrod::OIDCClient do
+  subject(:oidc_client) { described_class.new }
+
   before do
     Keyrod::Settings['oidc-site'] = 'https://aai-dev.egi.eu/oidc/token'
     Keyrod::Settings['refresh-token'] = 'iOiI0ZDQ5MzUxMC00MDJhLTQ3NDQtYjE4Yi'
@@ -16,7 +18,7 @@ describe Keyrod::OIDCClient do
 
   describe '#access_token' do
     it 'returns access token' do
-      expect(OIDCClient.access_token).to be_instance_of(String)
+      expect(oidc_client.access_token).to be_instance_of(String)
     end
   end
 end
