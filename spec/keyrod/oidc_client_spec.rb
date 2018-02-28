@@ -8,6 +8,8 @@ describe Keyrod::OIDCClient do
     Keyrod::Settings['refresh-token'] = 'iOiI0ZDQ5MzUxMC00MDJhLTQ3NDQtYjE4Yi'
     Keyrod::Settings['client-id'] = 'keyrod'
     Keyrod::Settings['client-secret'] = '3HcNV88ex48UKYPWCI1OwresZAxMjh1Pdf'
+    Keyrod::Settings['verify-ssl'] = false
+    Keyrod::Settings['ca-dir'] = '/etc/ssl/certs'
 
     stub_request(:post, 'https://aai-dev.egi.eu/oidc/token?client_id=keyrod&client_secret=3HcNV88ex48UKYPWCI1OwresZAxMjh1Pdf&grant_type=refresh_token&refresh_token=iOiI0ZDQ5MzUxMC00MDJhLTQ3NDQtYjE4Yi&scope=openid%20profile')
       .with(headers: {
@@ -68,6 +70,25 @@ describe Keyrod::OIDCClient do
       it 'raises ResponseError' do
         expect { oidc_client.access_token }.to raise_error(Keyrod::Errors::ResponseError)
       end
+    end
+  end
+
+  describe '.set_params' do
+    it 'sets params' do
+      params = oidc_client.send(:set_params)
+      expect(params).to be_instance_of(Hash)
+      expect(params[:client_id]).to eq('keyrod')
+      expect(params[:client_secret]).to eq('3HcNV88ex48UKYPWCI1OwresZAxMjh1Pdf')
+      expect(params[:refresh_token]).to eq('iOiI0ZDQ5MzUxMC00MDJhLTQ3NDQtYjE4Yi')
+    end
+  end
+
+  describe '.set_ssl' do
+    it 'sets ssl params for faraday' do
+      ssl_params = oidc_client.send(:set_ssl)
+      expect(ssl_params).to be_instance_of(Hash)
+      expect(ssl_params[:verify]).to be false
+      expect(ssl_params[:ca_path]).to eq('/etc/ssl/certs')
     end
   end
 end
