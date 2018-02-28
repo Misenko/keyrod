@@ -1,4 +1,5 @@
 require 'thor'
+require 'yell'
 
 module Keyrod
   class CLI < Thor
@@ -68,6 +69,7 @@ module Keyrod
            aliases: '-t'
     def token
       merge_config options
+      init_logger
     end
 
     desc 'version', 'Prints Keyrod version'
@@ -78,6 +80,12 @@ module Keyrod
     default_task :token
 
     private
+
+    def init_logger
+      logging_level = Keyrod::Settings[:debug] ? [:debug] : [:info]
+      Yell.new :stdout, name: Object, level: logging_level
+      Object.send :include, Yell::Loggable
+    end
 
     def merge_config(options)
       Keyrod::Settings.clear

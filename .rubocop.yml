@@ -11,8 +11,6 @@ Style/Documentation:
 
 Metrics/MethodLength:
   Max: 15
-  Exclude:
-    - 'lib/keyrod/oidc_client.rb'
 
 Metrics/AbcSize:
   Max: 20
