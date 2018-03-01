@@ -53,12 +53,12 @@ describe Keyrod::OIDCClient do
   end
 
   describe '.access_token' do
-    it 'returns access token' do
-      expect(oidc_client.access_token).to be_instance_of(String)
-    end
-
     context 'with successful run' do
-      it 'doesnt raise any errors' do
+      it 'returns access token' do
+        expect(oidc_client.access_token).to be_instance_of(String)
+      end
+
+      it "doesn't raise any errors" do
         expect { oidc_client.access_token }.not_to raise_error
       end
     end
