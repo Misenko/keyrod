@@ -73,9 +73,9 @@ describe Keyrod::OIDCClient do
     end
   end
 
-  describe '.set_params' do
+  describe '.params' do
     it 'sets params' do
-      params = oidc_client.send(:set_params)
+      params = oidc_client.send(:params)
       expect(params).to be_instance_of(Hash)
       expect(params[:client_id]).to eq('keyrod')
       expect(params[:client_secret]).to eq('3HcNV88ex48UKYPWCI1OwresZAxMjh1Pdf')
@@ -83,9 +83,9 @@ describe Keyrod::OIDCClient do
     end
   end
 
-  describe '.set_ssl' do
+  describe '.ssl' do
     it 'sets ssl params for faraday' do
-      ssl_params = oidc_client.send(:set_ssl)
+      ssl_params = oidc_client.send(:ssl)
       expect(ssl_params).to be_instance_of(Hash)
       expect(ssl_params[:verify]).to be false
       expect(ssl_params[:ca_path]).to eq('/etc/ssl/certs')
