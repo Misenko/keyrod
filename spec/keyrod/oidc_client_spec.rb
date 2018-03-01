@@ -36,19 +36,19 @@ describe Keyrod::OIDCClient do
     end
 
     it 'sets oidc-site' do
-      expect(oidc_client.oidc_site).to be_instance_of(String)
+      expect(oidc_client.oidc_site).to eq('https://aai-dev.egi.eu/oidc/token')
     end
 
     it 'sets refresh-token' do
-      expect(oidc_client.refresh_token).to be_instance_of(String)
+      expect(oidc_client.refresh_token).to eq('iOiI0ZDQ5MzUxMC00MDJhLTQ3NDQtYjE4Yi')
     end
 
     it 'sets client-id' do
-      expect(oidc_client.client_id).to be_instance_of(String)
+      expect(oidc_client.client_id).to eq('keyrod')
     end
 
     it 'sets client-secret' do
-      expect(oidc_client.client_secret).to be_instance_of(String)
+      expect(oidc_client.client_secret).to eq('3HcNV88ex48UKYPWCI1OwresZAxMjh1Pdf')
     end
   end
 
