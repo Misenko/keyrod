@@ -1,4 +1,7 @@
 keyrod:
+  debug: false # Debug mode
+  ca-dir: # CA directory
+  verify-ssl: true # Verify SSL certificate
   fedcloud:
     site: http://localhost/ # EGI FedCloud Site to authenticate against
     access_token: # Access token

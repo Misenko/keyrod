@@ -24,3 +24,6 @@ Metrics/BlockLength:
     - '**/*.rake'
     - 'spec/**/*.rb'
     - '*.gemspec'
+
+RSpec/MultipleExpectations:
+  Enabled: false
