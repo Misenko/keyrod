@@ -34,9 +34,9 @@ module Keyrod
     end
 
     def ssl
-      ssl = { verify: Keyrod::Settings[:'verify-ssl'] }
-      ssl[:ca_path] = Keyrod::Settings[:'ca-dir'] if Keyrod::Settings[:'ca-dir']
-      ssl
+      ssl_params = { verify: Keyrod::Settings[:'verify-ssl'] }
+      ssl_params[:ca_path] = Keyrod::Settings[:'ca-dir'] if Keyrod::Settings[:'ca-dir']
+      ssl_params
     end
   end
 end
