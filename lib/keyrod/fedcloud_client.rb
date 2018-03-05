@@ -4,12 +4,11 @@ require 'net/http'
 
 module Keyrod
   class FedcloudClient
-    attr_reader :site, :access_token, :group, :auth_path, :projects_path, :scoped_path
+    attr_reader :site, :access_token, :auth_path, :projects_path, :scoped_path
 
     def initialize
       @site = Keyrod::Settings[:site]
-      @access_token = Keyrod::Settings[:access_token]
-      @group = Keyrod::Settings[:group]
+      @access_token = Keyrod::Settings[:'access-token']
       @auth_path = '/v3/OS-FEDERATION/identity_providers/egi.eu/protocols/oidc/auth'
       @projects_path = '/v3/auth/projects'
       @scoped_path = '/v3/auth/tokens'
