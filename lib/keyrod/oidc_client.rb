@@ -15,7 +15,7 @@ module Keyrod
     def access_token
       conn = Faraday.new(oidc_site, ssl: ssl, params: params)
 
-      logger.debug "Sending request with params #{conn.params}"
+      logger.debug "access_token: Sending request with params #{conn.params}"
       response = conn.post
       logger.debug "Received response with code #{response.status} and body #{response.body}"
       raise Keyrod::Errors::ResponseError, "Response from OIDC server was #{response.status}" unless response.success?
