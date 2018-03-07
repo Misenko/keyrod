@@ -4,14 +4,15 @@ require 'net/http'
 
 module Keyrod
   class FedcloudClient
-    attr_reader :site, :access_token, :auth_path, :projects_path, :scoped_path
+    attr_reader :site, :access_token, :auth_path
+
+    PROJECTS_PATH = '/v3/auth/projects'
+    SCOPED_PATH = '/v3/auth/tokens'
 
     def initialize
       @site = Keyrod::Settings[:site]
       @access_token = Keyrod::Settings[:'access-token']
-      @auth_path = '/v3/OS-FEDERATION/identity_providers/egi.eu/protocols/oidc/auth'
-      @projects_path = '/v3/auth/projects'
-      @scoped_path = '/v3/auth/tokens'
+      @auth_path = "/v3/OS-FEDERATION/identity_providers/#{Keyrod::Settings[:'identity-provider']}/protocols/oidc/auth"
     end
 
     def unscoped_token
@@ -90,7 +91,7 @@ module Keyrod
     end
 
     def connection_projects(fc_site, unscoped_token)
-      Faraday.new(fc_site + projects_path, ssl: ssl, headers: projects_headers(unscoped_token))
+      Faraday.new(fc_site + PROJECTS_PATH, ssl: ssl, headers: projects_headers(unscoped_token))
     end
 
     def parse_projects(projects_body)
@@ -126,13 +127,11 @@ module Keyrod
     end
 
     def connection_scoped(fc_site)
-      Faraday.new(fc_site + scoped_path, ssl: ssl, headers: scoped_token_headers)
+      Faraday.new(fc_site + SCOPED_PATH, ssl: ssl, headers: scoped_token_headers)
     end
 
     def parse_scoped_token(response)
-      token = response.headers[:'X-Subject-Token']
-      username = JSON.parse(response.body, symbolize_names: true)[:token][:user][:name]
-      "#{username}:#{token}"
+      response.headers[:'X-Subject-Token']
     end
   end
 end
