@@ -6,8 +6,8 @@ module Keyrod
   class FedcloudClient
     attr_reader :site, :access_token, :auth_path
 
-    PROJECTS_PATH = '/v3/auth/projects'
-    SCOPED_PATH = '/v3/auth/tokens'
+    PROJECTS_PATH = '/v3/auth/projects'.freeze
+    SCOPED_PATH = '/v3/auth/tokens'.freeze
 
     def initialize
       @site = Keyrod::Settings[:site]
