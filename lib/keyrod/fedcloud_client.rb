@@ -8,6 +8,8 @@ module Keyrod
 
     PROJECTS_PATH = '/v3/auth/projects'.freeze
     SCOPED_PATH = '/v3/auth/tokens'.freeze
+    REDIRECT_HEADER = 'WWW-Authenticate'.freeze
+    REDIRECT_REGEXP = /(?<=\')(.*?)(?=\')/
 
     def initialize
       @site = Keyrod::Settings[:site]
@@ -16,13 +18,13 @@ module Keyrod
     end
 
     def unscoped_token
-      conn = connection_unscoped(site)
+      conn = connection(unscoped_token_params)
 
       logger.debug "unscoped_token: Sending request with headers #{conn.headers}"
       response = conn.get
 
       if response.status == 401
-        conn = connection_unscoped(parse_redirect(response))
+        conn = connection(unscoped_token_params(parse_redirect(response)))
         response = conn.get
       end
 
@@ -31,13 +33,13 @@ module Keyrod
     end
 
     def projects(unscoped_token)
-      conn = connection_projects(site, unscoped_token)
+      conn = connection(projects_params(unscoped_token))
 
       logger.debug "projects: Sending request with headers #{conn.headers}"
       response = conn.get
 
       if response.status == 401
-        conn = connection_projects(parse_redirect(response), unscoped_token)
+        conn = connection(projects_params(unscoped_token, parse_redirect(response)))
         response = conn.get
       end
 
@@ -46,7 +48,7 @@ module Keyrod
     end
 
     def scoped_token(unscoped_token, project)
-      conn = connection_scoped(site)
+      conn = connection(scoped_token_params)
 
       logger.debug "scoped_token: Sending request with headers #{conn.headers}"
       response = conn.post do |req|
@@ -54,7 +56,7 @@ module Keyrod
       end
 
       if response.status == 401
-        conn = connection_scoped(parse_redirect(response))
+        conn = connection(scoped_token_params(parse_redirect(response)))
         response = conn.post do |req|
           req.body = scoped_token_body(unscoped_token, project)
         end
@@ -66,32 +68,26 @@ module Keyrod
 
     private
 
-    def unscoped_token_headers
-      { Authorization: "Bearer #{access_token}",
-        Accept: 'application/json' }
-    end
-
     def ssl
       ssl_params = { verify: Keyrod::Settings[:'verify-ssl'] }
       ssl_params[:ca_path] = Keyrod::Settings[:'ca-dir'] if Keyrod::Settings[:'ca-dir']
       ssl_params
     end
 
-    def parse_redirect(response)
-      response.headers['WWW-Authenticate'].match(/(?<=\')(.*?)(?=\')/).to_s
+    def unscoped_token_params(fc_site = site)
+      {
+        site: fc_site,
+        headers: { Authorization: "Bearer #{access_token}", Accept: 'application/json' },
+        path: auth_path
+      }
     end
 
-    def connection_unscoped(fc_site)
-      Faraday.new(fc_site + auth_path, ssl: ssl, headers: unscoped_token_headers)
-    end
-
-    def projects_headers(unscoped_token)
-      { 'X-Auth-Token': unscoped_token,
-        Accept: 'application/json' }
-    end
-
-    def connection_projects(fc_site, unscoped_token)
-      Faraday.new(fc_site + PROJECTS_PATH, ssl: ssl, headers: projects_headers(unscoped_token))
+    def projects_params(unscoped_token, fc_site = site)
+      {
+        site: fc_site,
+        headers: { 'X-Auth-Token': unscoped_token, Accept: 'application/json' },
+        path: PROJECTS_PATH
+      }
     end
 
     def parse_projects(projects_body)
@@ -103,9 +99,12 @@ module Keyrod
       projects
     end
 
-    def scoped_token_headers
-      { Accept: 'application/json',
-        'Content-Type': 'application/json' }
+    def scoped_token_params(fc_site = site)
+      {
+        site: fc_site,
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        path: SCOPED_PATH
+      }
     end
 
     def scoped_token_body(unscoped_token, project)
@@ -126,12 +125,16 @@ module Keyrod
       }.to_json
     end
 
-    def connection_scoped(fc_site)
-      Faraday.new(fc_site + SCOPED_PATH, ssl: ssl, headers: scoped_token_headers)
-    end
-
     def parse_scoped_token(response)
       response.headers[:'X-Subject-Token']
+    end
+
+    def connection(params)
+      Faraday.new(File.join(params[:site], params[:path]), ssl: ssl, headers: params[:headers])
+    end
+
+    def parse_redirect(response)
+      response.headers[REDIRECT_HEADER].match(REDIRECT_REGEXP).to_s
     end
   end
 end
