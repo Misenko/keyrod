@@ -4,7 +4,7 @@ require 'net/http'
 
 module Keyrod
   class FedcloudClient
-    attr_reader :site, :access_token, :auth_path
+    attr_reader :site, :access_token, :auth_path, :ssl
 
     PROJECTS_PATH = '/v3/auth/projects'.freeze
     SCOPED_PATH = '/v3/auth/tokens'.freeze
@@ -15,6 +15,7 @@ module Keyrod
       @site = Keyrod::Settings[:site]
       @access_token = Keyrod::Settings[:'access-token']
       @auth_path = "/v3/OS-FEDERATION/identity_providers/#{Keyrod::Settings[:'identity-provider']}/protocols/oidc/auth"
+      @ssl = Keyrod::Settings[:ssl]
     end
 
     def unscoped_token
@@ -67,12 +68,6 @@ module Keyrod
     end
 
     private
-
-    def ssl
-      ssl_params = { verify: Keyrod::Settings[:'verify-ssl'] }
-      ssl_params[:ca_path] = Keyrod::Settings[:'ca-dir'] if Keyrod::Settings[:'ca-dir']
-      ssl_params
-    end
 
     def unscoped_token_params(fc_site = site)
       {

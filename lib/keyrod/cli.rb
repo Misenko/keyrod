@@ -96,6 +96,9 @@ module Keyrod
     def merge_config(options)
       Keyrod::Settings.clear
       Keyrod::Settings.merge! options.to_hash
+      ssl_params = { verify: Keyrod::Settings[:'verify-ssl'] }
+      ssl_params[:ca_path] = Keyrod::Settings[:'ca-dir'] if Keyrod::Settings[:'ca-dir']
+      Keyrod::Settings[:ssl] = ssl_params
     end
   end
 end

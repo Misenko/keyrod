@@ -3,13 +3,14 @@ require 'json'
 
 module Keyrod
   class OIDCClient
-    attr_reader :oidc_site, :refresh_token, :client_id, :client_secret
+    attr_reader :oidc_site, :refresh_token, :client_id, :client_secret, :ssl
 
     def initialize
       @oidc_site = Keyrod::Settings[:'oidc-site']
       @refresh_token = Keyrod::Settings[:'refresh-token']
       @client_id = Keyrod::Settings[:'client-id']
       @client_secret = Keyrod::Settings[:'client-secret']
+      @ssl = Keyrod::Settings[:ssl]
     end
 
     def access_token
@@ -31,12 +32,6 @@ module Keyrod
         client_secret: client_secret,
         refresh_token: refresh_token,
         scope: 'openid profile' }
-    end
-
-    def ssl
-      ssl_params = { verify: Keyrod::Settings[:'verify-ssl'] }
-      ssl_params[:ca_path] = Keyrod::Settings[:'ca-dir'] if Keyrod::Settings[:'ca-dir']
-      ssl_params
     end
   end
 end
