@@ -86,12 +86,8 @@ module Keyrod
     end
 
     def parse_projects(projects_body)
-      projects = []
       project_json = JSON.parse(projects_body, symbolize_names: true)
-      project_json[:projects].each do |project|
-        projects << project[:id]
-      end
-      projects
+      project_json[:projects].map { |project| project[:id] }
     end
 
     def scoped_token_params(fc_site = site)
