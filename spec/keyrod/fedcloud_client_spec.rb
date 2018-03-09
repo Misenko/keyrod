@@ -48,6 +48,17 @@ describe Keyrod::FedcloudClient do
               'X-Auth-Token' => 'failtoken'
             })
       .to_return(status: 400, body: '', headers: {})
+
+    stub_request(:post, 'https://took666.ics.muni.cz:3000/v3/auth/tokens')
+      .with(headers: {
+              'Accept' => 'application/json',
+              'Content-Type' => 'application/json',
+              'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+              'User-Agent' => 'Faraday v0.14.0'
+            },
+            body: '{"auth":{"identity":{"methods":["token"],"token":{"id":"GsqbMaedcZ4XTUN53DPc+VgdwjfEv"}},'\
+            '"scope":{"project":{"id":"fedcloud.egi.eu"}}}}')
+      .to_return(status: 200, body: '', headers: { 'X-Subject-Token': 'user@egi.eu:token' })
   end
 
   describe '#new' do
@@ -105,6 +116,21 @@ describe Keyrod::FedcloudClient do
 
       it 'raises ResponseError' do
         expect { fedcloud_client.projects(unscoped_token) }.to raise_error(Keyrod::Errors::ResponseError)
+      end
+    end
+  end
+
+  describe '.scoped_token' do
+    context 'with successful run' do
+      let(:unscoped_token) { 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv' }
+      let(:group) { 'fedcloud.egi.eu' }
+
+      it 'returns scoped token' do
+        expect(fedcloud_client.scoped_token(unscoped_token, group)).to eq('user@egi.eu:token')
+      end
+
+      it "doesn't raise any errors" do
+        expect { fedcloud_client.scoped_token(unscoped_token, group) }.not_to raise_error
       end
     end
   end
