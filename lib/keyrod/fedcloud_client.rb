@@ -22,12 +22,8 @@ module Keyrod
       conn = connection(unscoped_token_params)
 
       logger.debug "unscoped_token: Sending request with headers #{conn.headers}"
-      response = conn.get
 
-      if response.status == 401
-        conn = connection(unscoped_token_params(parse_redirect(response)))
-        response = conn.get
-      end
+      response = handle_response(conn)
 
       raise Keyrod::Errors::ResponseError, "Response for getting unscoped token was #{response.status}" unless response.success?
       response.headers[:'X-Subject-Token']
@@ -37,12 +33,8 @@ module Keyrod
       conn = connection(projects_params(unscoped_token))
 
       logger.debug "projects: Sending request with headers #{conn.headers}"
-      response = conn.get
 
-      if response.status == 401
-        conn = connection(projects_params(unscoped_token, parse_redirect(response)))
-        response = conn.get
-      end
+      response = handle_response(conn)
 
       raise Keyrod::Errors::ResponseError, "Response for getting list of projects was #{response.status}" unless response.success?
       parse_projects(response.body)
@@ -52,16 +44,8 @@ module Keyrod
       conn = connection(scoped_token_params)
 
       logger.debug "scoped_token: Sending request with headers #{conn.headers}"
-      response = conn.post do |req|
-        req.body = scoped_token_body(unscoped_token, project)
-      end
 
-      if response.status == 401
-        conn = connection(scoped_token_params(parse_redirect(response)))
-        response = conn.post do |req|
-          req.body = scoped_token_body(unscoped_token, project)
-        end
-      end
+      response = handle_response(conn, scoped_token_body(unscoped_token, project))
 
       raise Keyrod::Errors::ResponseError, "Response for getting scoped token was #{response.status}" unless response.success?
       parse_scoped_token(response)
@@ -126,6 +110,17 @@ module Keyrod
 
     def parse_redirect(response)
       response.headers[REDIRECT_HEADER].match(REDIRECT_REGEXP).to_s
+    end
+
+    def handle_response(conn, body = nil)
+      response = body ? conn.post('', body) : conn.get
+
+      if response.status == 401
+        redirect_url = File.join(parse_redirect(response), conn.path_prefix)
+        response = body ? conn.post(redirect_url, body) : conn.get(redirect_url)
+      end
+
+      response
     end
   end
 end
