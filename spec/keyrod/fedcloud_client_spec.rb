@@ -40,6 +40,15 @@ describe Keyrod::FedcloudClient do
       [{"is_domain": false,"description": "","links": {"self": ""},"enabled": true,"id": "fedcloud.egi.eu",
       "parent_id": "","domain_id": "","name": "fedcloud.egi.eu"}]}', headers: {})
 
+    stub_request(:get, 'https://took666.ics.muni.cz:5000/v3/auth/projects')
+      .with(headers: {
+              'Accept' => 'application/json',
+              'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+              'User-Agent' => 'Faraday v0.14.0',
+              'X-Auth-Token' => 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv'
+            })
+      .to_return(status: 401, body: '', headers: { 'WWW-Authenticate': "Keystone URI:'https://took666.ics.muni.cz:3000'" })
+
     stub_request(:get, 'https://took666.ics.muni.cz:3000/v3/auth/projects')
       .with(headers: {
               'Accept' => 'application/json',
@@ -248,6 +257,10 @@ describe Keyrod::FedcloudClient do
       '{"auth":{"identity":{"methods":["token"],"token":{"id":"GsqbMaedcZ4XTUN53DPc+VgdwjfEv"}},'\
         '"scope":{"project":{"id":"fedcloud.egi.eu"}}}}'
     end
+    let(:conn_get_redirect) do
+      Faraday.new(File.join('https://took666.ics.muni.cz:5000', '/v3/auth/projects'),
+                  headers: { 'X-Auth-Token': 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv', Accept: 'application/json' })
+    end
 
     it 'sends get and returns response' do
       response = fedcloud_client.send(:handle_response, conn_get)
@@ -257,6 +270,12 @@ describe Keyrod::FedcloudClient do
 
     it 'sends post and returns response' do
       response = fedcloud_client.send(:handle_response, conn_post, post_body)
+      expect(response).to be_instance_of(Faraday::Response)
+      expect(response.status).to eq(200)
+    end
+
+    it 'correctly handles redirect' do
+      response = fedcloud_client.send(:handle_response, conn_get_redirect)
       expect(response).to be_instance_of(Faraday::Response)
       expect(response.status).to eq(200)
     end
