@@ -48,7 +48,7 @@ module Keyrod
       response = handle_response(conn, scoped_token_body(unscoped_token, project))
 
       raise Keyrod::Errors::ResponseError, "Response for getting scoped token was #{response.status}" unless response.success?
-      parse_scoped_token(response)
+      response.headers[:'X-Subject-Token']
     end
 
     private
@@ -67,11 +67,6 @@ module Keyrod
         headers: { 'X-Auth-Token': unscoped_token, Accept: 'application/json' },
         path: PROJECTS_PATH
       }
-    end
-
-    def parse_projects(projects_body)
-      project_json = JSON.parse(projects_body, symbolize_names: true)
-      project_json[:projects].map { |project| project[:id] }
     end
 
     def scoped_token_params(fc_site = site)
@@ -100,16 +95,17 @@ module Keyrod
       }.to_json
     end
 
-    def parse_scoped_token(response)
-      response.headers[:'X-Subject-Token']
-    end
-
-    def connection(params)
-      Faraday.new(File.join(params[:site], params[:path]), ssl: ssl, headers: params[:headers])
+    def parse_projects(projects_body)
+      project_json = JSON.parse(projects_body, symbolize_names: true)
+      project_json[:projects].map { |project| project[:id] }
     end
 
     def parse_redirect(response)
       response.headers[REDIRECT_HEADER].match(REDIRECT_REGEXP).to_s
+    end
+
+    def connection(params)
+      Faraday.new(File.join(params[:site], params[:path]), ssl: ssl, headers: params[:headers])
     end
 
     def handle_response(conn, body = nil)
