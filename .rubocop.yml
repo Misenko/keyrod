@@ -17,8 +17,6 @@ Metrics/AbcSize:
 
 Metrics/ClassLength:
   Max: 120
-  Exclude:
-    - 'lib/keyrod/cli.rb'
 
 Metrics/BlockLength:
   Exclude:

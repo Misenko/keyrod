@@ -1,7 +1,5 @@
 module Keyrod
   module Errors
     class ResponseError < StandardError; end
-    class ParamsError < StandardError; end
-    class ProjectError < StandardError; end
   end
 end
