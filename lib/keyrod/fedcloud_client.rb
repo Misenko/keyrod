@@ -9,7 +9,6 @@ module Keyrod
     PROJECTS_PATH = '/v3/auth/projects'.freeze
     SCOPED_PATH = '/v3/auth/tokens'.freeze
     REDIRECT_HEADER = 'WWW-Authenticate'.freeze
-    REDIRECT_REGEXP = /(?<=\')(.*?)(?=\')/
 
     def initialize
       @site = Keyrod::Settings[:site]
@@ -101,7 +100,7 @@ module Keyrod
     end
 
     def parse_redirect(response)
-      response.headers[REDIRECT_HEADER].match(REDIRECT_REGEXP).to_s
+      response.headers[REDIRECT_HEADER].downcase.sub('keystone uri=', '').delete("'")
     end
 
     def connection(params)

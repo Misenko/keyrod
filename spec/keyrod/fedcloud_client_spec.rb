@@ -47,7 +47,7 @@ describe Keyrod::FedcloudClient do
               'User-Agent' => 'Faraday v0.14.0',
               'X-Auth-Token' => 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv'
             })
-      .to_return(status: 401, body: '', headers: { 'WWW-Authenticate': "Keystone URI:'https://took666.ics.muni.cz:3000'" })
+      .to_return(status: 401, body: '', headers: { 'WWW-Authenticate': "Keystone URI='https://took666.ics.muni.cz:3000'" })
 
     stub_request(:get, 'https://took666.ics.muni.cz:3000/v3/auth/projects')
       .with(headers: {
@@ -220,7 +220,7 @@ describe Keyrod::FedcloudClient do
   describe '.parse_redirect' do
     let(:response) do
       Faraday::Response.new(response_headers: { 'WWW-Authenticate':
-    "Keystone URI:'https://took666.ics.muni.cz:5000'" })
+    "Keystone URI='https://took666.ics.muni.cz:5000'" })
     end
 
     it 'returns redirect URI' do
