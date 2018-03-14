@@ -108,7 +108,7 @@ module Keyrod
     end
 
     def handle_response(conn, body = nil)
-      response = body ? conn.post('', body) : conn.get
+      response = body ? conn.post { |req| req.body = body } : conn.get
 
       if response.status == 401 && response.headers[REDIRECT_HEADER]
         redirect_url = File.join(parse_redirect(response), conn.path_prefix)
