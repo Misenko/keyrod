@@ -53,25 +53,25 @@ module Keyrod
 
     private
 
-    def unscoped_token_params(fc_site = site)
+    def unscoped_token_params
       {
-        site: fc_site,
+        site: site,
         headers: { Authorization: "Bearer #{access_token}", Accept: 'application/json' },
         path: auth_path
       }
     end
 
-    def projects_params(unscoped_token, fc_site = site)
+    def projects_params(unscoped_token)
       {
-        site: fc_site,
+        site: site,
         headers: { 'X-Auth-Token': unscoped_token, Accept: 'application/json' },
         path: PROJECTS_PATH
       }
     end
 
-    def scoped_token_params(fc_site = site)
+    def scoped_token_params
       {
-        site: fc_site,
+        site: site,
         headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
         path: SCOPED_PATH
       }
