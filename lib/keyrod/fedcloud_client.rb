@@ -111,7 +111,7 @@ module Keyrod
     def handle_response(conn, body = nil)
       response = body ? conn.post('', body) : conn.get
 
-      if response.status == 401
+      if response.status == 401 && response.headers[REDIRECT_HEADER]
         redirect_url = File.join(parse_redirect(response), conn.path_prefix)
         response = body ? conn.post(redirect_url, body) : conn.get(redirect_url)
       end
