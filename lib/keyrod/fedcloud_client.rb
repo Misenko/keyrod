@@ -18,35 +18,18 @@ module Keyrod
     end
 
     def unscoped_token
-      conn = connection(unscoped_token_params)
-
-      logger.debug "unscoped_token: Sending request with headers #{conn.headers}"
-
-      response = handle_response(conn)
-
-      raise Keyrod::Errors::ResponseError, "Response for getting unscoped token was #{response.status}" unless response.success?
+      response = handle_response(unscoped_token_params, error_message: 'Response for getting unscoped token was')
       response.headers[:'X-Subject-Token']
     end
 
     def projects(unscoped_token)
-      conn = connection(projects_params(unscoped_token))
-
-      logger.debug "projects: Sending request with headers #{conn.headers}"
-
-      response = handle_response(conn)
-
-      raise Keyrod::Errors::ResponseError, "Response for getting list of projects was #{response.status}" unless response.success?
+      response = handle_response(projects_params(unscoped_token), error_message: 'Response for getting list of projects was')
       parse_projects(response.body)
     end
 
     def scoped_token(unscoped_token, project)
-      conn = connection(scoped_token_params)
-
-      logger.debug "scoped_token: Sending request with headers #{conn.headers}"
-
-      response = handle_response(conn, scoped_token_body(unscoped_token, project))
-
-      raise Keyrod::Errors::ResponseError, "Response for getting scoped token was #{response.status}" unless response.success?
+      response = handle_response(scoped_token_params, body: scoped_token_body(unscoped_token, project),
+                                                      error_message: 'Response for getting scoped token was')
       response.headers[:'X-Subject-Token']
     end
 
@@ -107,7 +90,9 @@ module Keyrod
       Faraday.new(File.join(params[:site], params[:path]), ssl: ssl, headers: params[:headers])
     end
 
-    def handle_response(conn, body = nil)
+    def handle_response(params, body: nil, error_message: '')
+      conn = connection(params)
+      logger.debug "Sending request with headers #{conn.headers}"
       response = body ? conn.post { |req| req.body = body } : conn.get
 
       if response.status == 401 && response.headers[REDIRECT_HEADER]
@@ -115,6 +100,7 @@ module Keyrod
         response = body ? conn.post(redirect_url, body) : conn.get(redirect_url)
       end
 
+      raise Keyrod::Errors::ResponseError, "#{error_message} #{response.status}" unless response.success?
       response
     end
   end

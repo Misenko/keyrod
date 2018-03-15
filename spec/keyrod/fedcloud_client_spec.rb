@@ -245,37 +245,49 @@ describe Keyrod::FedcloudClient do
   end
 
   describe '.handle_response' do
-    let(:conn_get) do
-      Faraday.new(File.join('https://took666.ics.muni.cz:3000', '/v3/auth/projects'),
-                  headers: { 'X-Auth-Token': 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv', Accept: 'application/json' })
+    let(:get_params) do
+      {
+        site: 'https://took666.ics.muni.cz:3000',
+        path: '/v3/auth/projects',
+        headers: { 'X-Auth-Token': 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv', Accept: 'application/json' }
+      }
     end
-    let(:conn_post) do
-      Faraday.new(File.join('https://took666.ics.muni.cz:3000', '/v3/auth/tokens'),
-                  headers: { Accept: 'application/json', 'Content-Type': 'application/json' })
+
+    let(:get_redirect_params) do
+      {
+        site: 'https://took666.ics.muni.cz:5000',
+        path: '/v3/auth/projects',
+        headers: { 'X-Auth-Token': 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv', Accept: 'application/json' }
+      }
     end
+
+    let(:post_params) do
+      {
+        site: 'https://took666.ics.muni.cz:3000',
+        path: '/v3/auth/tokens',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' }
+      }
+    end
+
     let(:post_body) do
       '{"auth":{"identity":{"methods":["token"],"token":{"id":"GsqbMaedcZ4XTUN53DPc+VgdwjfEv"}},'\
         '"scope":{"project":{"id":"fedcloud.egi.eu"}}}}'
     end
-    let(:conn_get_redirect) do
-      Faraday.new(File.join('https://took666.ics.muni.cz:5000', '/v3/auth/projects'),
-                  headers: { 'X-Auth-Token': 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv', Accept: 'application/json' })
-    end
 
     it 'sends get and returns response' do
-      response = fedcloud_client.send(:handle_response, conn_get)
+      response = fedcloud_client.send(:handle_response, get_params)
       expect(response).to be_instance_of(Faraday::Response)
       expect(response.status).to eq(200)
     end
 
     it 'sends post and returns response' do
-      response = fedcloud_client.send(:handle_response, conn_post, post_body)
+      response = fedcloud_client.send(:handle_response, post_params, body: post_body)
       expect(response).to be_instance_of(Faraday::Response)
       expect(response.status).to eq(200)
     end
 
     it 'correctly handles redirect' do
-      response = fedcloud_client.send(:handle_response, conn_get_redirect)
+      response = fedcloud_client.send(:handle_response, get_redirect_params)
       expect(response).to be_instance_of(Faraday::Response)
       expect(response.status).to eq(200)
     end
