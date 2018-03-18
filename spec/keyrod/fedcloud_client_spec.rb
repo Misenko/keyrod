@@ -48,7 +48,7 @@ describe Keyrod::FedcloudClient do
               'X-Auth-Token' => 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv'
             })
       .to_return(status: 401, body: '', headers: { 'WWW-Authenticate': "Keystone URI='https://took666.ics.muni.cz:3000'" })
-    
+
     stub_request(:get, 'https://took666.ics.muni.cz:2000/v3/auth/projects')
       .with(headers: {
               'Accept' => 'application/json',
@@ -275,7 +275,7 @@ describe Keyrod::FedcloudClient do
         site: 'https://took666.ics.muni.cz:2000',
         path: '/v3/auth/projects',
         headers: { 'X-Auth-Token': 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv', Accept: 'application/json' }
-      }      
+      }
     end
 
     let(:post_params) do
