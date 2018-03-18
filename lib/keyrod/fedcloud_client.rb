@@ -93,11 +93,15 @@ module Keyrod
     def handle_response(params, body: nil, error_message: '')
       conn = connection(params)
       logger.debug "Sending request with headers #{conn.headers}"
-      response = body ? conn.post { |req| req.body = body } : conn.get
+      begin
+        response = body ? conn.post { |req| req.body = body } : conn.get
 
-      if response.status == 401 && response.headers[REDIRECT_HEADER]
-        redirect_url = File.join(parse_redirect(response), conn.path_prefix)
-        response = body ? conn.post(redirect_url, body) : conn.get(redirect_url)
+        if response.status == 401 && response.headers[REDIRECT_HEADER]
+          params[:site] = parse_redirect(response)
+          response = handle_response(params, body: body, error_message: error_message)
+        end
+      rescue Faraday::ConnectionFailed
+        raise Keyrod::Errors::ConnectionError, "Couldn't connect to site #{params[:site]}"
       end
 
       raise Keyrod::Errors::ResponseError, "#{error_message} #{response.status}" unless response.success?

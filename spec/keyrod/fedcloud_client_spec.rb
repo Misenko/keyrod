@@ -48,6 +48,15 @@ describe Keyrod::FedcloudClient do
               'X-Auth-Token' => 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv'
             })
       .to_return(status: 401, body: '', headers: { 'WWW-Authenticate': "Keystone URI='https://took666.ics.muni.cz:3000'" })
+    
+    stub_request(:get, 'https://took666.ics.muni.cz:2000/v3/auth/projects')
+      .with(headers: {
+              'Accept' => 'application/json',
+              'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+              'User-Agent' => 'Faraday v0.14.0',
+              'X-Auth-Token' => 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv'
+            })
+      .to_timeout
 
     stub_request(:get, 'https://took666.ics.muni.cz:3000/v3/auth/projects')
       .with(headers: {
@@ -261,6 +270,14 @@ describe Keyrod::FedcloudClient do
       }
     end
 
+    let(:get_error_params) do
+      {
+        site: 'https://took666.ics.muni.cz:2000',
+        path: '/v3/auth/projects',
+        headers: { 'X-Auth-Token': 'GsqbMaedcZ4XTUN53DPc+VgdwjfEv', Accept: 'application/json' }
+      }      
+    end
+
     let(:post_params) do
       {
         site: 'https://took666.ics.muni.cz:3000',
@@ -274,22 +291,29 @@ describe Keyrod::FedcloudClient do
         '"scope":{"project":{"id":"fedcloud.egi.eu"}}}}'
     end
 
-    it 'sends get and returns response' do
-      response = fedcloud_client.send(:handle_response, get_params)
-      expect(response).to be_instance_of(Faraday::Response)
-      expect(response.status).to eq(200)
-    end
+    context 'with successful run' do
+      it 'sends get and returns response' do
+        response = fedcloud_client.send(:handle_response, get_params)
+        expect(response).to be_instance_of(Faraday::Response)
+        expect(response.status).to eq(200)
+      end
 
-    it 'sends post and returns response' do
-      response = fedcloud_client.send(:handle_response, post_params, body: post_body)
-      expect(response).to be_instance_of(Faraday::Response)
-      expect(response.status).to eq(200)
-    end
+      it 'sends post and returns response' do
+        response = fedcloud_client.send(:handle_response, post_params, body: post_body)
+        expect(response).to be_instance_of(Faraday::Response)
+        expect(response.status).to eq(200)
+      end
 
-    it 'correctly handles redirect' do
-      response = fedcloud_client.send(:handle_response, get_redirect_params)
-      expect(response).to be_instance_of(Faraday::Response)
-      expect(response.status).to eq(200)
+      it 'correctly handles redirect' do
+        response = fedcloud_client.send(:handle_response, get_redirect_params)
+        expect(response).to be_instance_of(Faraday::Response)
+        expect(response.status).to eq(200)
+      end
+    end
+    context 'with an error' do
+      it 'raises ConnectionError' do
+        expect { fedcloud_client.send(:handle_response, get_error_params) }.to raise_error(Keyrod::Errors::ConnectionError)
+      end
     end
   end
 end
