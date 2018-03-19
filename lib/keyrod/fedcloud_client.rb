@@ -100,8 +100,8 @@ module Keyrod
           params[:site] = parse_redirect(response)
           response = handle_response(params, body: body, error_message: error_message)
         end
-      rescue Faraday::ConnectionFailed
-        raise Keyrod::Errors::ConnectionError, "Couldn't connect to site #{params[:site]}"
+      rescue Faraday::ConnectionFailed => e
+        raise Keyrod::Errors::ConnectionError, e.message
       end
 
       raise Keyrod::Errors::ResponseError, "#{error_message} #{response.status}" unless response.success?
