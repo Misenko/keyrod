@@ -43,6 +43,12 @@ module Keyrod
            type: :boolean,
            desc: 'Fallback to interactive mode if group is not set',
            aliases: '-f'
+    option :'identity-provider',
+           required: true,
+           default: Keyrod::Settings['fedcloud']['identity-provider'],
+           type: :string,
+           desc: 'Identity provider for token',
+           aliases: '-p'
     option :'refresh-token',
            required: false,
            default: Keyrod::Settings['oidc']['refresh_token'],
@@ -74,7 +80,7 @@ module Keyrod
 
     desc 'version', 'Prints Keyrod version'
     def version
-      puts Keyrod::VERSION
+      $stdout.puts Keyrod::VERSION
     end
 
     default_task :token
@@ -90,6 +96,9 @@ module Keyrod
     def merge_config(options)
       Keyrod::Settings.clear
       Keyrod::Settings.merge! options.to_hash
+      ssl_params = { verify: Keyrod::Settings[:'verify-ssl'] }
+      ssl_params[:ca_path] = Keyrod::Settings[:'ca-dir'] if Keyrod::Settings[:'ca-dir']
+      Keyrod::Settings[:ssl] = ssl_params
     end
   end
 end
