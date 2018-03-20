@@ -78,6 +78,8 @@ module Keyrod
       validate_config options
       init_logger
       process_tokens
+    rescue Keyrod::Errors::ParamsError => e
+      abort e.message
     end
 
     desc 'version', 'Prints Keyrod version'
