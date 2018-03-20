@@ -122,22 +122,31 @@ module Keyrod
     end
 
     def process_tokens
-      if Keyrod::Settings[:'refresh-token']
-        oidc_client = Keyrod::OIDCClient.new
-        Keyrod::Settings[:'access-token'] = oidc_client.access_token
-      end
+      access_token if Keyrod::Settings[:'refresh-token']
+
       fedcloud_client = Keyrod::FedcloudClient.new
       unscoped_token = fedcloud_client.unscoped_token
       projects = fedcloud_client.projects(unscoped_token)
-      if Keyrod::Settings[:group] && !projects.include?(Keyrod::Settings[:group])
-        unless Keyrod::Settings[:'interactive-fallback']
-          raise Keyrod::Errors::ProjectError, "Group #{Keyrod::Settings[:group]} is not available"
-        end
-        Keyrod::Settings[:group] = nil
-      end
-
+      check_projects(projects)
       project = Keyrod::Settings[:group] ? Keyrod::Settings[:group] : ask('Choose one of these groups:', limited_to: projects)
+
       $stdout.puts fedcloud_client.scoped_token(unscoped_token, project)
+    rescue Keyrod::Errors::ProjectError => e
+      abort e.message
+    end
+
+    def access_token
+      oidc_client = Keyrod::OIDCClient.new
+      Keyrod::Settings[:'access-token'] = oidc_client.access_token
+    end
+
+    def check_projects(projects)
+      return unless Keyrod::Settings[:group] && !projects.include?(Keyrod::Settings[:group])
+
+      unless Keyrod::Settings[:'interactive-fallback']
+        raise Keyrod::Errors::ProjectError, "Group #{Keyrod::Settings[:group]} is not available"
+      end
+      Keyrod::Settings[:group] = nil
     end
   end
 end
