@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="Keyrod" src="https://i.imgur.com/yZKRrO0.png"/>
+    <img alt="Keyrod" src="https://i.imgur.com/yZKRrO0.png" width="300"/>
 </p>
 
 # Keyrod
