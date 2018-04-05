@@ -27,9 +27,9 @@ bundle install
 ## Configuration
 ### Location
 Configuration file can be saved in these paths:
-* `~/.keyrod/config.yml`
-* `/etc/keyrod/config.yml`
-* `PATH_TO_GEM/config/config.yml` - this is default location
+* `~/.keyrod/keyrod.yml`
+* `/etc/keyrod/keyrod.yml`
+* `PATH_TO_GEM/keyrod/keyrod.yml` - this is default location
 
 ## Usage
 ```bash

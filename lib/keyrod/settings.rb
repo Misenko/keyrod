@@ -2,7 +2,7 @@ require 'settingslogic'
 
 module Keyrod
   class Settings < Settingslogic
-    config_file = 'config.yml'
+    config_file = 'keyrod.yml'
 
     source "#{ENV['HOME']}/.keyrod/#{config_file}"\
     if File.exist?("#{ENV['HOME']}/.keyrod/#{config_file}")
