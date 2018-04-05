@@ -100,7 +100,7 @@ module Keyrod
           params[:site] = parse_redirect(response)
           response = handle_response(params, body: body, error_message: error_message)
         end
-      rescue Faraday::ConnectionFailed => e
+      rescue Faraday::ClientError => e
         raise Keyrod::Errors::ConnectionError, e.message
       end
 
